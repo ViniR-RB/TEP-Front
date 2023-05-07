@@ -33,14 +33,16 @@ class AllUserSerializer(serializers.ModelSerializer):
 class NoticeSerializer(serializers.ModelSerializer):
     creator = serializers.ReadOnlyField(source='creator.username')
     creator_id = serializers.ReadOnlyField(source='creator.id')
-    image = serializers.ImageField(required=True)
-    title = serializers.CharField(max_length=100)
-    body = serializers.CharField(max_length=255)
+    title = serializers.CharField(max_length=100,required=True)
+    body = serializers.CharField(max_length=255,required=True)
+    image = serializers.ImageField()
 
     class Meta:
         model = Notice
         fields = ['id', 'creator', 'creator_id',
-                  'title', 'body', 'image']
+                  'title', 'body', 'image','creation_date']
+    def create(self, validated_data):
+        return Notice.objects.create(**validated_data)
 
 
 class RegisterSerializer(serializers.ModelSerializer):

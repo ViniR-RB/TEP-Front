@@ -15,10 +15,15 @@ class NoticeViewSet(viewsets.ModelViewSet):
     queryset = Notice.objects.all().order_by('creation_date')
     serializer_class = NoticeSerializer
     parser_classes = (MultiPartParser, FormParser)
-    permission_classes = [permissions.IsAuthenticated]
+    permission_classes = [permissions.IsAuthenticatedOrReadOnly]
 
     def perform_create(self, serializer):
-        serializer.save(creator=self.request.user)
+        if self.request.user.is_authenticated:
+            instance = serializer.save(creator=self.request.user)
+            
+        else:
+            instance = serializer.save()
+        
 
 
 class RegisterViewSet(generics.CreateAPIView):
